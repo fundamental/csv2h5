@@ -1,0 +1,5 @@
+CSV2H5
+------
+
+csv2h5 - Convert csv file consisting of floating point data
+and header into a HDF5 file
