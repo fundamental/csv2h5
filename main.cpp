@@ -76,6 +76,21 @@ vector<string> extract_names(const char *header)
     return names;
 }
 
+//Count the lines in the file
+int total_lines(FILE *file)
+{
+    int lines = 0;
+    int chr;
+    while(EOF != (chr = getc(file)))
+        if(chr == '\n')
+            lines++;
+
+    clearerr(file);
+    rewind(file);
+
+    return lines;
+}
+
 int main(int argc, char **argv)
 {
     check_args(argc, argv);
@@ -83,7 +98,8 @@ int main(int argc, char **argv)
     const char *fin  = argv[1];
     const char *fout = argv[2];
 
-    FILE *file = fopen(fin, "r");
+    FILE     *file  = fopen(fin, "r");
+    const int lines = total_lines(file);
 
     //Get the names of the columns
     fgets(line,LINE_INPUT_MAX,file);
@@ -94,6 +110,7 @@ int main(int argc, char **argv)
         data.push_back(vector<float>());
 
     printf("Loading Data From CSV...\n");
+    int cline = 1;
     while(fgets(line, LINE_INPUT_MAX, file))
     {
         float f;
@@ -107,10 +124,14 @@ int main(int argc, char **argv)
             if (sss.peek() == ',')
                 sss.ignore();
         }
+        if(cline++ % (lines/10) == 0) {
+            printf("%d%% Complete...\n", cline*100/lines);
+        }
     }
 
+    printf("\nSummary:\n");
     for(unsigned i=0; i<data.size(); ++i)
-        printf("col[%d] => %d sample(s)\n", i, (int)data[i].size());
+        printf("column %d(%s) contained %d sample(s)\n", i, names[i].c_str(), (int)data[i].size());
 
     printf("Writing to HDF5...\n");
     try
