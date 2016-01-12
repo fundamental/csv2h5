@@ -45,10 +45,9 @@ void check_args(int argc, char **argv)
     }
     const char *csv = argv[1];
     const char *h5  = argv[2];
-    if(!strstr(csv,"csv")) {
-        printf("ERROR: '%s' doesn't look like a csv file\n", csv);
-        printf("       Please use the .csv extension\n");
-        exit(1);
+    if(!strstr(csv, "csv") && !strstr(csv, "txt")) {
+        printf("WARNING: '%s' doesn't look like a csv file\n", csv);
+        printf("          Please use the .csv extension\n");
     }
     
     if(!strstr(h5,"h5")) {
