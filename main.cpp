@@ -139,11 +139,16 @@ int main(int argc, char **argv)
         H5::H5File hFile(fout, H5F_ACC_TRUNC);
         for(unsigned i=0; i<data.size(); ++i) {
             hsize_t dims[1];
-            dims[0] = data[i].size();
+            hsize_t chunk[1];
+            dims[0]  = data[i].size();
+            chunk[0] = data[i].size();
             H5::DataSpace dataspace(1,dims);
             H5::IntType datatype(H5::PredType::NATIVE_FLOAT);
+            H5::DSetCreatPropList props;
+            props.setChunk(1, chunk);
+            props.setDeflate(6);
             H5::DataSet dataset = 
-                hFile.createDataSet(names[i], datatype, dataspace);
+                hFile.createDataSet(names[i], datatype, dataspace, props);
             dataset.write(data[i].data(), H5::PredType::NATIVE_FLOAT);
         }
     } catch(H5::Exception e)
